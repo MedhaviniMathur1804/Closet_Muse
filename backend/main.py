@@ -9,7 +9,6 @@ from fastapi.staticfiles import StaticFiles
 
 from utils import image_processor
 from models.product import ProductCreate
-from database import mongodb
 from utils.image_processor import ImageProcessor
 from models.classifier import ClothingClassifier
 from models.recommender import FashionRecommender
