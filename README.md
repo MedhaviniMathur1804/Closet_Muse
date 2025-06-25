@@ -10,7 +10,7 @@ An open-source fashion recommendation system that suggests complementary clothin
 - Complementary item recommendations
 - RESTful API endpoints
 - React-based web interface
-- MongoDB integration for product storage
+- Docker integration for product storage
 
 ## Tech Stack
 
@@ -24,7 +24,7 @@ An open-source fashion recommendation system that suggests complementary clothin
 - TensorFlow with MobileNetV2 for classification
 - OpenCV for image processing
 - FAISS for similarity search
-- MongoDB for data storage
+- Docker for data storage
 - Python libraries: NumPy, Pillow, scikit-learn
 
 ## Prerequisites
@@ -56,25 +56,16 @@ cd frontend
 npm install
 ```
 
-4. Create a `.env` file in the backend directory:
-```
-MONGODB_URI=mongodb://localhost:27017/
-```
 
 ## Running the Application
 
-1. Start MongoDB:
-```bash
-mongod
-```
-
-2. Start the backend server:
+1. Start the backend server:
 ```bash
 cd backend
 uvicorn main:app --reload
 ```
 
-3. Start the frontend development server:
+2. Start the frontend development server:
 ```bash
 cd frontend
 npm start
