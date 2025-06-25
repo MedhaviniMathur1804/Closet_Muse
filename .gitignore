@@ -1,37 +1,19 @@
 # Python
-venv/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite3
-*.h5
-*.egg-info/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
 
-# Environment
+# Environment variables
 .env
-.env.*
+
+# IDE
+.vscode/
+.idea/
 
 # OS
 .DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Jupyter
-.ipynb_checkpoints/
-
-# VSCode
-.vscode/
-
-# Node
-node_modules/
-
-# Misc
-*.bak
-*.swp
-*.tmp
-*.out
-*.class 
+Thumbs.db 
