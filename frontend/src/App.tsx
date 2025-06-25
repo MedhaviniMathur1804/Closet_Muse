@@ -62,26 +62,28 @@ function App() {
       {/* Right: Output */}
       <div className="right-panel">
         <h2>Recommendations</h2>
-        {recommendations.length === 0 ? (
+        {Object.keys(recommendations).length === 0 ? (
           <p>No recommendations yet.</p>
         ) : (
-          <ul>
-            {recommendations.map((rec, idx) => (
-              <li key={idx}>
-                <strong>{rec.name}</strong> <br />
-                <img src={rec.image_url} alt={rec.name} style={{ maxWidth: "100px" }} />
-                <br />
-                <span>{rec.description}</span>
-              </li>
-            ))}
-          </ul>
+          Object.entries(recommendations).map(([category, recs]) => (
+            <div key={category}>
+              <h3>{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
+              <ul>
+                {recs.map((rec, idx) => (
+                  <li key={idx}>
+                    <strong>{rec.name}</strong> <br />
+                    <img src={rec.image_url} alt={rec.name} style={{ maxWidth: "100px" }} />
+                    <br />
+                    <span>{rec.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
         )}
       </div>
     </div>
   );
 }
-
-
-
 
 export default App; 

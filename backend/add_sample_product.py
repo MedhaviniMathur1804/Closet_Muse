@@ -21,7 +21,7 @@ BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
 image_processor = ImageProcessor()
 classifier = ClothingClassifier()
 
-def add_product_from_image(image_path: str, name: str, price: float, description: str, image_url: str = None):
+def add_product_from_image(image_path: str, name: str, price: float, description: str, image_url: str = None, force_category: str = None):
     try:
         # Read image file content
         with open(image_path, 'rb') as f:
@@ -33,17 +33,20 @@ def add_product_from_image(image_path: str, name: str, price: float, description
         # Extract image features
         image_features = image_processor.get_image_features(processed_image)
 
-        # Classify the clothing
-        classification_result = classifier.predict(processed_image)
-
-        if not classification_result['primary_category']:
-            print(f"Error: Could not classify the clothing item in {image_path}")
-            return
+        # Classify the clothing or use forced category
+        if force_category:
+            category = force_category
+        else:
+            classification_result = classifier.predict(processed_image)
+            if not classification_result['primary_category']:
+                print(f"Error: Could not classify the clothing item in {image_path}")
+                return
+            category = classification_result['primary_category']
 
         # Prepare product data
         product_data = {
             "name": name,
-            "category": classification_result['primary_category'],
+            "category": category,
             "price": price,
             "description": description,
             "image_url": image_url if image_url else os.path.abspath(image_path),
@@ -81,8 +84,19 @@ if __name__ == "__main__":
                 price = 100.0
                 description = "Auto-added product"
                 image_url = f"http://localhost:8000/static/{filename}"
-                print(f"Adding product for {filename}...")
-                add_product_from_image(image_path, name, price, description, image_url)
+                # Force category by filename prefix
+                if filename.lower().startswith("accessory"):
+                    force_category = "accessories"
+                elif filename.lower().startswith("footwear"):
+                    force_category = "footwear"
+                elif filename.lower().startswith("top"):
+                    force_category = "top"
+                elif filename.lower().startswith("bottom"):
+                    force_category = "bottom"
+                else:
+                    force_category = None
+                print(f"Adding product for {filename} as category {force_category if force_category else 'auto'}...")
+                add_product_from_image(image_path, name, price, description, image_url, force_category)
     elif len(sys.argv) < 5:
         print("Usage: python add_sample_product.py <image_path> <name> <price> <description> [image_url]")
         sys.exit(1)

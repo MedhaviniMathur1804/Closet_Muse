@@ -13,11 +13,12 @@ class FashionRecommender:
         
         # Define complementary categories
         self.complementary_categories = {
-            'top': ['bottom', 'accessories'],
-            'bottom': ['top', 'footwear', 'accessories'],
+            'top': ['bottom', 'accessories', 'footwear'],
+            'bottom': ['top', 'accessories', 'footwear'],
+            'footwear': ['top', 'bottom', 'accessories'],
+            'accessories': ['top', 'bottom', 'footwear'],
             'dress': ['footwear', 'accessories'],
-            'outerwear': ['top', 'bottom', 'accessories'],
-            'footwear': ['bottom', 'accessories']
+            'outerwear': ['top', 'bottom', 'accessories']
         }
         
         # Color compatibility rules
@@ -56,29 +57,32 @@ class FashionRecommender:
         self.index.add(normalized_features.astype('float32'))
 
     def get_recommendations(self, query_features, category=None, top_k=5):
-        # Recommend from the same category as the query
-        filtered_products = [p for p in self.products if p['category'] == category]
-        print("All product categories:", [p['category'] for p in self.products])
-        print("Target category:", category)
-        # If no products in the same category, return empty list
-        if not filtered_products:
-            return []
-        # Prepare feature vectors for filtered products
-        filtered_features = np.array([
-            self.feature_vectors[idx]
-            for idx, p in enumerate(self.products)
-            if p['category'] == category
-        ])
-        # Normalize query and product features
-        normalized_query = query_features.reshape(1, -1)
-        normalized_query = normalized_query / np.linalg.norm(normalized_query)
-        normalized_features = filtered_features / np.linalg.norm(filtered_features, axis=1, keepdims=True)
-        # Compute distances
-        dists = np.linalg.norm(normalized_features - normalized_query, axis=1)
-        # Get top_k indices
-        top_indices = np.argsort(dists)[:top_k]
-        # Return the top_k recommended products
-        return [filtered_products[i] for i in top_indices]
+        # Prepare output dict
+        recommendations_by_category = {}
+        # Categories to recommend from: main + complementary
+        categories_to_check = []
+        if category in self.complementary_categories:
+            categories_to_check += self.complementary_categories[category]
+        categories_to_check = list(set(categories_to_check))  # Remove duplicates
+
+        for cat in categories_to_check:
+            filtered_products = [p for p in self.products if p['category'] == cat]
+            if not filtered_products:
+                recommendations_by_category[cat] = []
+                continue
+            filtered_features = np.array([
+                self.feature_vectors[idx]
+                for idx, p in enumerate(self.products)
+                if p['category'] == cat
+            ])
+            # Normalize query and product features
+            normalized_query = query_features.reshape(1, -1)
+            normalized_query = normalized_query / np.linalg.norm(normalized_query)
+            normalized_features = filtered_features / np.linalg.norm(filtered_features, axis=1, keepdims=True)
+            dists = np.linalg.norm(normalized_features - normalized_query, axis=1)
+            top_index = np.argmin(dists)
+            recommendations_by_category[cat] = [filtered_products[top_index]]
+        return recommendations_by_category
 
     def _is_monochromatic(self, color1: List[int], color2: List[int]) -> bool:
         """Check if two colors are monochromatic (same hue, different brightness)."""

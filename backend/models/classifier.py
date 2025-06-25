@@ -15,7 +15,20 @@ class ClothingClassifier:
             'bottom': ['pants', 'jeans', 'skirt', 'shorts', 'suit', 'sarong'],
             'dress': ['dress'],
             'outerwear': ['coat', 'jacket'],
-            'footwear': ['shoes', 'boots', 'sneakers']
+            'footwear': ['shoes', 'boots', 'sneakers', 'sandals', 'loafers', 'slippers', 'flip_flop', 'running_shoe', 'clog', 'cowboy_boot'],
+            'accessories': [
+                'necklace', 'bracelet', 'ring', 'watch', 'belt', 'scarf', 'hat', 'cap', 'sunglasses', 'glasses', 'tie', 'bow_tie', 'wallet', 'purse', 'handbag', 'backpack'
+            ]
+        }
+
+        # Define complementary categories mapping
+        self.complementary_categories = {
+            'top': ['bottom', 'accessories', 'footwear'],
+            'bottom': ['top', 'accessories', 'footwear'],
+            'footwear': ['top', 'bottom', 'accessories'],
+            'accessories': ['top', 'bottom', 'footwear'],
+            'dress': ['footwear', 'accessories'],
+            'outerwear': ['top', 'bottom', 'accessories']
         }
 
     def predict(self, image: np.ndarray) -> Dict[str, Any]:
