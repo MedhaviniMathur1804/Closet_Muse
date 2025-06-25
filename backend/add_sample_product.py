@@ -71,14 +71,27 @@ def add_product_from_image(image_path: str, name: str, price: float, description
         print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
-        print("Usage: python add_product_from_image.py <image_path> <name> <price> <description> [image_url]")
+    if len(sys.argv) < 2:
+        # No arguments: add all images in backend/images
+        images_dir = os.path.join(os.path.dirname(__file__), "images")
+        for filename in os.listdir(images_dir):
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                image_path = os.path.join(images_dir, filename)
+                name = os.path.splitext(filename)[0]
+                price = 100.0
+                description = "Auto-added product"
+                image_url = f"http://localhost:8000/static/{filename}"
+                print(f"Adding product for {filename}...")
+                add_product_from_image(image_path, name, price, description, image_url)
+    elif len(sys.argv) < 5:
+        print("Usage: python add_sample_product.py <image_path> <name> <price> <description> [image_url]")
         sys.exit(1)
 
-    image_path = sys.argv[1]
-    name = sys.argv[2]
-    price = float(sys.argv[3])
-    description = sys.argv[4]
-    image_url = sys.argv[5] if len(sys.argv) > 5 else None
+    else:
+        image_path = sys.argv[1]
+        name = sys.argv[2]
+        price = float(sys.argv[3])
+        description = sys.argv[4]
+        image_url = sys.argv[5] if len(sys.argv) > 5 else None
 
-    add_product_from_image(image_path, name, price, description, image_url) 
+        add_product_from_image(image_path, name, price, description, image_url) 

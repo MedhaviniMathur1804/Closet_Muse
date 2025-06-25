@@ -57,10 +57,12 @@ for p in products_from_db:
     print(f"Product ID {p.get('id')}: Processed features = {features}")
 
     if features is not None:
-        category = p.get('category')  # e.g., "top", "bottom", "footwear", "accessories"
-        image_filename = f"{category}_{p.get('id')}.png"
-        image_url = f"http://localhost:8000/static/{image_filename}"
-        p['image_url'] = image_url
+        # Only set image_url if it is missing
+        if not p.get('image_url'):
+            category = p.get('category')  # e.g., "top", "bottom", etc.
+            image_filename = f"{category}_{p.get('id')}.png"
+            image_url = f"http://localhost:8000/static/{image_filename}"
+            p['image_url'] = image_url
         recommender.add_product(p, features)
 
 print(f"Loaded {len(recommender.products)} products into the recommender on startup.")
